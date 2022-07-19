@@ -1,0 +1,69 @@
+##0 install a conda enviromnent
+
+#download from https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh
+bash Anaconda3-2020.11-Linux-x86_64.sh
+
+#disable conda change ps1
+conda config --set changeps1 False
+
+
+
+##1 create a new conda environment
+
+conda create -n myenv 
+conda activate myenv
+
+#jupyter lab with python ipykernel R irkernel
+conda install -c conda-forge jupyterlab=2.2.9
+conda install -c conda-forge jupyterlab #v3.0.0, this will also install python(v3.9.1) and ipython ipykernel
+
+##install R and irkernel
+#conda install -c r r
+conda install -c conda-forge r-base r-irkernel #the newest R 4.0.3
+
+
+##check python and R and dependent package version
+jupyter --version
+
+
+##2 configure jupyter lab 
+Step 1: Password Setup
+jupyter notebook --generate-config
+jupyter notebook password
+
+Step 2: Using SSL for Encrypted Communication (can be skip)
+#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout mycert.pem -out mycert.pem
+
+
+#Step 3: edit .jupyter/jupyter_notebook_config.py and add at the end of this file:
+
+##add @2021 1.2
+# Set options for certfile, ip, password, and toggle off
+# browser auto-opening
+#c.NotebookApp.certfile = u'/public-supool/home/mjwang/.jupyter/mycert.pem'
+#c.NotebookApp.keyfile = u'/public-supool/home/mjwang/.jupyter/mycert.pem'
+# Set ip to '*' to bind on all interfaces (ips) for the public server
+c.NotebookApp.ip = '*'
+##c.NotebookApp.ip = '0.0.0.0' #jupyterlab <= 0.33
+#c.NotebookApp.password = u'sha1:3a37e5222e1d:1cdf46ae2465a72e62d549d10da237f799cd66b8'
+c.NotebookApp.open_browser = False
+
+# It is a good idea to set a known, fixed port for server access
+c.NotebookApp.port = 9999
+
+
+#Step 4: set up an connection on your PC or MAC (run once and will be ok, windows may skip this?)
+ssh -N -f -L 8888:localhost:9999 10.1.72.30
+
+#Step 5: running jupyter on linux server:
+conda activate myenv
+nohup jupyter lab --no-browser --port 10000 >log.jupyterlab_myenv.Jan.2 2>&1 & echo "pid is: "$! > pid.jupyterlab_myenv.Jan.2 &
+
+
+
+#Step 6: open browser and visit jupyter lab at :
+http://10.1.72.30:10000/
+
+##happy coding!
+
+
